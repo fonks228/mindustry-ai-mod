@@ -1,11 +1,7 @@
-name: AI Mindustry Mod
-displayName: AI Mindustry
-author: fonks228 + Grok
-description: Мод с умным ИИ для юнитов — формации, адаптивное поведение, роевые атаки
+name: AI Mindustry
 version: 1.0
+main: ai-mod.Main
+author: fonks228 + Grok
+description: Advanced AI modes + Python self-learning
 minGameVersion: 146
-
-scripts: [
-  scripts/main.js
-  scripts/formations.js
-]
+hasScripts: true
