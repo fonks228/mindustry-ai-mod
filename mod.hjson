@@ -1,7 +1,5 @@
 name: AI Mindustry
 version: 1.0
-main: ai-mod.Main
+minGameVersion: 157
+description: Advanced AI modes + Python self-learning support
 author: fonks228 + Grok
-description: Advanced AI modes + Python self-learning
-minGameVersion: 154
-hasScripts: true
