@@ -3,5 +3,5 @@ version: 1.0
 main: ai-mod.Main
 author: fonks228 + Grok
 description: Advanced AI modes + Python self-learning
-minGameVersion: 146
+minGameVersion: 154
 hasScripts: true
