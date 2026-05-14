@@ -1,8 +1,5 @@
-name: AI Mindustry
-version: 1.0
+name: "AI Mindustry"
+author: "fonks228 + Grok"
+version: "1.0"
 minGameVersion: 157
-description: Advanced AI modes for units + Python self-learning
-author: fonks228 + Grok
-
-main: null
-dependencies: []
+description: "Advanced AI modes with UI + Python self-learning"
