@@ -1,7 +1,12 @@
-print("[#00ff00]AI Mindustry v1.3[#ffffff] загружен!");
+print("[#00ff00]AI Mindustry v1.3[#ffffff] успешно загружен!");
 
 let currentAIMode = "None";
 let menuOpen = false;
+
+// Load controllers
+if (!Vars.headless) {
+    require("ai-controllers");
+}
 
 const modes = ["None", "Basic", "Aggressive", "Defensive", "Formation", "Python"];
 
@@ -11,31 +16,52 @@ function showAIMenu() {
 
     let dialog = new BaseDialog("AI Mindustry Control");
     
-    dialog.cont.add("[#accent]AI Mindustry - Режимы ИИ").pad(12).row();
-    dialog.cont.add("Текущий: [#accent]" + currentAIMode).padBottom(20).row();
+    dialog.cont.add("[accent]AI Mindustry - Выбор режима").pad(12).row();
+    dialog.cont.add("Текущий режим: [accent]" + currentAIMode).padBottom(20).row();
 
     modes.forEach(mode => {
         dialog.cont.button(mode, Styles.cleart, () => {
             currentAIMode = mode;
-            Vars.ui.announce("[#accent]Режим ИИ: [] [#green]" + mode, 4);
+            Vars.ui.announce("[accent]Режим ИИ изменён на: [green]" + mode, 4);
             dialog.hide();
-        }).size(340, 70).pad(6).row();
+        }).size(320, 65).pad(5).row();
     });
 
     dialog.addCloseButton();
     
-    dialog.hidden(() => { menuOpen = false; });
+    dialog.hidden(() => menuOpen = false);
     dialog.show();
 }
 
-// Горячая клавиша P
+// Обработка клавиши P
 Events.on(ClientLoadEvent, () => {
-    let lastPress = 0;
+    let lastTime = 0;
 
     Events.run(Trigger.update, () => {
-        if (Core.input.keyTap(KeyCode.p) && Time.time - lastPress > 20) {
-            lastPress = Time.time;
-            showAIMenu();
+        if (Core.input.keyTap(KeyCode.p)) {
+            if (Time.time - lastTime > 20 && !Vars.ui.chatfield.shown()) {
+                lastTime = Time.time;
+                showAIMenu();
+            }
         }
     });
 });
+
+// Главный цикл обновления ИИ
+Events.run(Trigger.update, () => {
+    if (currentAIMode === "None") return;
+
+    let playerUnit = Vars.player.unit();
+    if (!playerUnit) return;
+
+    let units = Units.getAllUnits();
+    for (let i = 0; i < units.size; i++) {
+        let unit = units.get(i);
+        if (unit.team == playerUnit.team && unit != playerUnit || unit.controller() instanceof PlayerController) {
+            // Применяем выбранный режим
+            applyAIMode(unit, currentAIMode);
+        }
+    }
+});
+
+print("[#00ff00]Нажми P для открытия меню ИИ[]");
