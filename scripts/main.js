@@ -1,51 +1,45 @@
-print("[#00ff00]AI Mindustry[#ffffff] загружен! v1.0");
+print("[#00ff00]AI Mindustry v1.2[#ffffff] успешно загружен!");
 
-let currentMode = "none";
-let uiOpen = false;
+let currentAIMode = "None";
+let menuOpen = false;
 
-const modes = [
-    {name: "None", value: "none"},
-    {name: "Basic", value: "basic"},
-    {name: "Aggressive", value: "aggressive"},
-    {name: "Defensive", value: "defensive"},
-    {name: "Formation", value: "formation"},
-    {name: "Python", value: "python"}
-];
+const modes = ["None", "Basic", "Aggressive", "Defensive", "Formation", "Python"];
 
-function openAIUI() {
-    if (uiOpen) return;
-    uiOpen = true;
+function showAIMenu() {
+    if (menuOpen) return;
+    menuOpen = true;
 
-    let table = new Table();
-    table.background(Styles.black6);
+    let dialog = new BaseDialog("AI Mindustry Control");
+    
+    dialog.cont.add("[accent]AI Mindustry - Выбор режима").pad(12).row();
+    dialog.cont.add("Текущий режим: [accent]" + currentAIMode).padBottom(20).row();
 
-    table.add("[accent]AI Mindustry - Режимы").pad(15).row();
-    table.row();
-
-    modes.forEach(m => {
-        table.button(m.name, () => {
-            currentMode = m.value;
-            Vars.ui.hudfrag.showToast("[accent]Режим ИИ: " + m.name);
-            table.remove();
-            uiOpen = false;
-        }).size(260, 65).pad(6).row();
+    modes.forEach(mode => {
+        dialog.cont.button(mode, Styles.cleart, () => {
+            currentAIMode = mode;
+            Vars.ui.announce("[accent]Режим ИИ изменён на: [green]" + mode, 4);
+            dialog.hide();
+        }).size(320, 65).pad(5).row();
     });
 
-    table.button("[red]Закрыть", () => {
-        table.remove();
-        uiOpen = false;
-    }).size(260, 65).pad(12);
-
-    Vars.ui.add(table).fill().center();
+    dialog.addCloseButton();
+    
+    dialog.hidden(() => menuOpen = false);
+    dialog.show();
 }
 
-// Правильная обработка клавиши для новых версий
+// Обработка клавиши P
 Events.on(ClientLoadEvent, () => {
-    Input.keyTap(KeyCode.p, () => {
-        if (!uiOpen) {
-            openAIUI();
+    let lastTime = 0;
+
+    Events.run(Trigger.update, () => {
+        if (Core.input.keyTap(KeyCode.p)) {
+            if (Time.time - lastTime > 20 && !Vars.ui.chatfield.shown()) {
+                lastTime = Time.time;
+                showAIMenu();
+            }
         }
     });
 });
 
-print("[#00ff00]AI Mindustry[#ffffff] готов! Нажми [accent]P[]");
+print("[#00ff00]Нажми P для открытия меню ИИ[]");
