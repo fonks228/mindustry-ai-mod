@@ -1,52 +1,60 @@
-// AI Controllers for Mindustry AI Mod
+// Advanced AI Controllers
 
-let currentAIMode = "None";
+aiMod.AggressiveAI = extend(UnitController, {
+    update: function(unit) {
+        // Find nearest enemy and attack aggressively
+        let target = Units.closestEnemy(unit.team, unit.x, unit.y, 9999, u => true);
+        if (target) unit.setTarget(target);
+    }
+});
 
-// Basic AI fallback
-function basicAI(unit) {
-  if (!unit || unit.dead) return;
-  // Simple follow and attack logic
-  unit.approach(Vars.player.unit().pos(), 4);
-}
+// More controllers will be added here
 
-function aggressiveAI(unit) {
-  if (!unit || unit.dead) return;
-  // Aggressive logic placeholder
-  unit.approach(Vars.player.unit().pos(), 10);
-}
-
-function defensiveAI(unit) {
-  if (!unit || unit.dead) return;
-  // Defensive placeholder
-  basicAI(unit);
-}
-
-function formationAI(unit) {
-  if (!unit || unit.dead) return;
-  // Formation placeholder
-  basicAI(unit);
-}
-
-// Python AI Stub
-function pythonAI(unit) {
-  // TODO: Python AI stub. Пока fallback на basic/defensive поведение.
-  // В будущем внешний Python-процесс будет читать состояние юнитов из файла и
-  // записывать команды обратно (файловый мост).
-  basicAI(unit);
-
-  // Пример файлового моста (описание формата ниже).
-  // Не реализуем синхронный мост тут — это пример формата данных, который
-  // внешняя программа должна читать/писывать в mods/ai_bridge.json.
-}
-
-// Формат JSON для моста (пример):
+// ==================================================================
+// Python AI STUB & File-bridge instructions (TODO for Grok)
+// ==================================================================
+// Пока Python-режим — заглушка. Ниже — комментарии с инструкцией по
+// файловому мосту между модом (JS) и внешним Python-процессом.
+// Grok: реализуй реальную логику pythonAI и IO по этим рекомендациям.
+//
+// Рекомендации:
+// 1) Место хранения файлов: папка mods/ (например mods/ai_bridge.json и mods/ai_commands.json)
+// 2) Формат состояния (ai_bridge.json) — массив объектов с состоянием юнитов:
 // [
 //   { "id": 123, "x": 320.5, "y": 512.0, "team": 0, "health": 450, "mode": "Python" },
 //   ...
 // ]
 //
-// Внешняя программа:
-// - читает mods/ai_bridge.json (последнее состояние юнитов),
-// - рассчитывает команды и пишет их в mods/ai_commands.json
-
-print("[AI Controllers] Loaded");
+// 3) Формат команд (ai_commands.json) — внешняя программа пишет команды:
+// [
+//   { "id": 123, "command": "move", "x": 400, "y": 600 },
+//   { "id": 456, "command": "attack", "targetId": 789 }
+// ]
+//
+// 4) Синхронизация (простая стратегия):
+// - Мод периодически (например, каждое N тиков) записывает текущее состояние юнитов в ai_bridge.json.
+// - Внешний процесс читает ai_bridge.json, высчитывает команды и записывает ai_commands.json.
+// - Мод периодически читает ai_commands.json и применяет команды к юнитам.
+//
+// 5) Замечания по реализации:
+// - Использовать простую блокировку/флаг (например, файл .ready или timestamp) чтобы не читать в момент записи.
+// - Можно использовать временные файлы: ai_commands.tmp -> переименовать в ai_commands.json после записи.
+// - Формат JSON прост и удобен для отладки.
+//
+// 6) Пример stub-функции (закомментированная) — Grok реализует по необходимости:
+//
+// function pythonAI(unit) {
+//     // Пока fallback: использовать поведение basic/defensive
+//     // basicAI(unit); // реализовать отдельно
+//     // или
+//     // defensiveAI(unit);
+//
+//     // TODO: записывать состояние в mods/ai_bridge.json и читать команды из mods/ai_commands.json
+// }
+//
+// 7) При реализации в моде следите, чтобы обращения к файловой системе
+//    соответствовали возможностям среды запуска Mindustry/модов. Если прямого
+//    доступа к файловой системе нет — можно использовать другой IPC-метод
+//    (например, локальный HTTP-сервер), но файловый мост чаще всего проще.
+//
+// Grok: после реализации pythonAI и мостa — дай знать, проверю репо и дам советы по отладке.
