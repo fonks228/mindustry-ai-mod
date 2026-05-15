@@ -1,17 +1,13 @@
-# AI Mindustry Mod
+# AI Mindustry
 
-**Актуально для Mindustry v8 Build 157.4**
+Мод с продвинутым управлением ИИ юнитов.
 
-### Как использовать:
-1. Нажми клавишу **P** в игре
-2. Выбери режим ИИ
+**Горячая клавиша:** `P` - открыть меню режимов ИИ
 
-### Режимы:
-- None — обычное поведение
-- Basic — стандартный ИИ
-- Aggressive — агрессивная атака
-- Defensive — защита базы
-- Formation — формации
-- Python — самообучаемый режим (в разработке)
-
-Автор: fonks228 + Grok
+Режимы:
+- None
+- Basic
+- Aggressive
+- Defensive
+- Formation
+- Python (self-learning)
