@@ -1,60 +1,52 @@
-// AI Controllers - Реальная логика
+// AI Controllers for Mindustry AI Mod
 
-let aiMod = this;
+let currentAIMode = "None";
 
-// Helper functions
-function applyAIMode(unit, mode) {
-    if (mode === "None") return;
-
-    if (mode === "Aggressive") {
-        aggressiveAI(unit);
-    } else if (mode === "Defensive") {
-        defensiveAI(unit);
-    } else if (mode === "Formation") {
-        formationAI(unit);
-    } else if (mode === "Basic") {
-        basicAI(unit);
-    }
+// Basic AI fallback
+function basicAI(unit) {
+  if (!unit || unit.dead) return;
+  // Simple follow and attack logic
+  unit.approach(Vars.player.unit().pos(), 4);
 }
 
 function aggressiveAI(unit) {
-    let target = Units.closestEnemy(unit.team, unit.x, unit.y, 800, u => true);
-    if (target) {
-        unit.setTarget(target);
-        unit.moveTo(target.x, target.y, 0.8);
-    }
+  if (!unit || unit.dead) return;
+  // Aggressive logic placeholder
+  unit.approach(Vars.player.unit().pos(), 10);
 }
 
 function defensiveAI(unit) {
-    let player = Vars.player.unit();
-    if (player) {
-        let dist = unit.dst(player);
-        if (dist > 200) {
-            unit.moveTo(player.x, player.y, 0.9);
-        }
-    }
-    // Attack nearby enemies
-    let enemy = Units.closestEnemy(unit.team, unit.x, unit.y, 400, u => true);
-    if (enemy) unit.setTarget(enemy);
+  if (!unit || unit.dead) return;
+  // Defensive placeholder
+  basicAI(unit);
 }
 
 function formationAI(unit) {
-    let player = Vars.player.unit();
-    if (!player) return;
-
-    let angle = unit.id * 25 % 360;
-    let radius = 120 + (unit.id % 5) * 15;
-    let targetX = player.x + Mathf.cosDeg(angle) * radius;
-    let targetY = player.y + Mathf.sinDeg(angle) * radius;
-
-    unit.moveTo(targetX, targetY, 0.85);
+  if (!unit || unit.dead) return;
+  // Formation placeholder
+  basicAI(unit);
 }
 
-function basicAI(unit) {
-    let target = Units.closestEnemy(unit.team, unit.x, unit.y, 600, u => true);
-    if (target) {
-        unit.setTarget(target);
-    }
+// Python AI Stub
+function pythonAI(unit) {
+  // TODO: Python AI stub. Пока fallback на basic/defensive поведение.
+  // В будущем внешний Python-процесс будет читать состояние юнитов из файла и
+  // записывать команды обратно (файловый мост).
+  basicAI(unit);
+
+  // Пример файлового моста (описание формата ниже).
+  // Не реализуем синхронный мост тут — это пример формата данных, который
+  // внешняя программа должна читать/писывать в mods/ai_bridge.json.
 }
 
-print("[#cyan]AI Controllers загружены[]");
+// Формат JSON для моста (пример):
+// [
+//   { "id": 123, "x": 320.5, "y": 512.0, "team": 0, "health": 450, "mode": "Python" },
+//   ...
+// ]
+//
+// Внешняя программа:
+// - читает mods/ai_bridge.json (последнее состояние юнитов),
+// - рассчитывает команды и пишет их в mods/ai_commands.json
+
+print("[AI Controllers] Loaded");
