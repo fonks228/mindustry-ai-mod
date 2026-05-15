@@ -1,5 +1,5 @@
 name: "AI Mindustry"
 author: "fonks228 + Grok"
-version: "1.0"
+version: "1.2"
 minGameVersion: 157
 description: "Advanced AI modes with UI + Python self-learning"
