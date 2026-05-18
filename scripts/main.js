@@ -1,23 +1,30 @@
-print("[#00ff00]AI Mindustry v2.0[#ffffff] загружен!");
+// AI Mindustry v2.0 - Main Entry Point
+
+print("[#00ff00]AI Mindustry v2.0[#ffffff] загружается...");
+
+// Инициализируем главный объект мода
+let aiMod = aiMod || {};
 
 let currentAIMode = "None";
 let menuOpen = false;
+let selectedUnit = null;
 
-const modes = ["None", "Basic", "Aggressive", "Defensive", "Formation", "Harvester", "Builder", "Scout", "Support", "Python"];
+const modes = ["None", "Basic", "Aggressive", "Defensive", "Formation", "Harvester", "Builder", "Scout", "Support"];
 
 function showAIMenu() {
     if (menuOpen) return;
     menuOpen = true;
 
-    let dialog = new BaseDialog("AI Mindustry Control");
+    let dialog = new BaseDialog("AI Mindustry Control v2.0");
     
-    dialog.cont.add("[#accent]AI Mindustry v2.0 - Режимы ИИ").pad(12).row();
+    dialog.cont.add("[#accent]AI Mindustry - Режимы ИИ").pad(12).row();
     dialog.cont.add("Текущий: [#accent]" + currentAIMode).padBottom(20).row();
 
     modes.forEach(mode => {
         dialog.cont.button(mode, Styles.cleart, () => {
             currentAIMode = mode;
-            Vars.ui.announce("[#accent]Режим ИИ: [] [#green]" + mode, 4);
+            Vars.ui.announce("[#accent]Режим: [] [#green]" + mode, 4);
+            applyModeToSelectedUnit();
             dialog.hide();
         }).size(340, 70).pad(6).row();
     });
@@ -28,34 +35,39 @@ function showAIMenu() {
     dialog.show();
 }
 
-// Применить текущий режим к юниту
-function applyAIMode(unit) {
-    if (!unit || currentAIMode == "None") return;
+// Применить режим к выбранному юниту
+function applyModeToSelectedUnit() {
+    let unit = Vars.player?.unit();
+    if (!unit) return;
 
     switch(currentAIMode) {
         case "Basic":
-            if (aiMod.BasicAI) unit.controller = aiMod.BasicAI;
+            unit.controller = aiMod.BasicAI || new BaseUnitController();
             break;
         case "Aggressive":
-            if (aiMod.AggressiveAI) unit.controller = aiMod.AggressiveAI;
+            unit.controller = aiMod.AggressiveAI || new BaseUnitController();
             break;
         case "Defensive":
-            if (aiMod.DefensiveAI) unit.controller = aiMod.DefensiveAI;
+            unit.controller = aiMod.DefensiveAI || new BaseUnitController();
             break;
         case "Formation":
-            if (aiMod.FormationAI) unit.controller = aiMod.FormationAI;
+            unit.controller = aiMod.FormationAI || new BaseUnitController();
             break;
         case "Harvester":
-            if (aiMod.HarvesterAI) unit.controller = aiMod.HarvesterAI;
+            unit.controller = aiMod.HarvesterAI || new BaseUnitController();
+            print("[#00ff00]Harvester режим активирован!");
             break;
         case "Builder":
-            if (aiMod.BuilderAI) unit.controller = aiMod.BuilderAI;
+            unit.controller = aiMod.BuilderAI || new BaseUnitController();
+            print("[#00ff00]Builder режим активирован!");
             break;
         case "Scout":
-            if (aiMod.ScoutAI) unit.controller = aiMod.ScoutAI;
+            unit.controller = aiMod.ScoutAI || new BaseUnitController();
+            print("[#00ff00]Scout режим активирован!");
             break;
         case "Support":
-            if (aiMod.SupportAI) unit.controller = aiMod.SupportAI;
+            unit.controller = aiMod.SupportAI || new BaseUnitController();
+            print("[#00ff00]Support режим активирован!");
             break;
     }
 }
@@ -69,31 +81,21 @@ Events.on(ClientLoadEvent, () => {
             lastPress = Time.time;
             showAIMenu();
         }
-    });
-});
 
-// Горячая клавиша H - Harvester
-Events.on(ClientLoadEvent, () => {
-    let lastPress = 0;
-
-    Events.run(Trigger.update, () => {
+        // Горячая клавиша H - Harvester
         if (Core.input.keyTap(KeyCode.h) && Time.time - lastPress > 20) {
             lastPress = Time.time;
             currentAIMode = "Harvester";
-            Vars.ui.announce("[#accent]Режим ИИ: [] [#green]Harvester", 3);
+            applyModeToSelectedUnit();
+            Vars.ui.announce("[#accent]Режим: [] [#green]Harvester", 3);
         }
-    });
-});
 
-// Горячая клавиша B - Builder
-Events.on(ClientLoadEvent, () => {
-    let lastPress = 0;
-
-    Events.run(Trigger.update, () => {
+        // Горячая клавиша B - Builder
         if (Core.input.keyTap(KeyCode.b) && Time.time - lastPress > 20) {
             lastPress = Time.time;
             currentAIMode = "Builder";
-            Vars.ui.announce("[#accent]Режим ИИ: [] [#green]Builder", 3);
+            applyModeToSelectedUnit();
+            Vars.ui.announce("[#accent]Режим: [] [#green]Builder", 3);
         }
     });
 });
@@ -116,6 +118,7 @@ Events.on(ClientLoadEvent, () => {
         // Harvester кнопка
         hudTable.button("H", Styles.cleart, () => {
             currentAIMode = "Harvester";
+            applyModeToSelectedUnit();
             Vars.ui.announce("[#accent]Режим: [] [#green]Harvester", 2);
         }).size(100, 60).pad(6);
 
@@ -124,6 +127,7 @@ Events.on(ClientLoadEvent, () => {
         // Builder кнопка
         hudTable.button("B", Styles.cleart, () => {
             currentAIMode = "Builder";
+            applyModeToSelectedUnit();
             Vars.ui.announce("[#accent]Режим: [] [#green]Builder", 2);
         }).size(100, 60).pad(6);
 
@@ -131,3 +135,5 @@ Events.on(ClientLoadEvent, () => {
         print("[red]AI HUD button error:[] " + e);
     }
 });
+
+print("[#00ff00]✓ AI Mindustry v2.0 загружен успешно![]");
