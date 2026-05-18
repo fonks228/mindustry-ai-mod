@@ -1,5 +1,5 @@
 name: "AI Mindustry"
 author: "fonks228 + Grok"
-version: "1.3"
+version: "2.0"
 minGameVersion: 157
-description: "Advanced AI modes with working hybrid controllers"
+description: "Advanced AI modes with harvesting, building, scouting and support - fully autonomous units"
